@@ -1,4 +1,3 @@
-%eac84@drexel.edu : TA
 function mri_findTumor()
 
 choice = input('MRI image: '); 
