@@ -1,3 +1,4 @@
+%eac84@drexel.edu : TA
 function mri_findTumor()
 
 choice = input('MRI image: '); 
@@ -12,6 +13,11 @@ switch(choice)
         error('Program error, use a number w/in [1, 3]!')
 end
 
+%Make sure the images are of similiar sizes
+imsize = size(im); max = 900;
+if (imsize(1) < max)
+    im = imresize(im, (max/imsize(1))); 
+end
 figure('Name', 'Original image') 
 imshow(im)
 
