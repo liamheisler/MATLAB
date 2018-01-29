@@ -1,6 +1,15 @@
-%eac84@drexel.edu : TA
-function mri_findTumor()
+%{
+The goal of this function is to take in an MRI scan, run filters
+and tests over it to isolate/identify the tumor, and then display
+the tumor over a dimmed-background original scan. This is a simplified
+version of software that could be in MRI scans of patients with 
+small and subtle tumors.
 
+Author/Name: Liam Heisler, ljh78@drexel.edu
+%}
+function mri_findTumor() %Do we want user input?
+
+%User choice, which scan do they want to test?
 choice = input('MRI image: '); 
 switch(choice)
     case 1
@@ -17,46 +26,50 @@ switch(choice)
         error('Program error, use a number w/in [1, 3]!')
 end
 
-%Make sure the images are of similiar sizes
+%Make sure the images are of similiar sizes. This makes it easier
+%when we want to filter via areas later.
 imsize = size(im); max = 900;
 if (imsize(1) < max)
     im = imresize(im, (max/imsize(1))); 
 end
-%figure('Name', 'Original image') 
-%imshow(im)
 
+%Convert to a grayscale image, and then reduce the brightness. The
+%reduced brightness image will be used in the final product. 
 gray = rgb2gray(im);
 imbr_reduce = imadjust(gray);
 redFact = 0.35;
 imbr_reduce = imbr_reduce * redFact;
 
+%Calculate brightness level [0,1]
 imbr_redcopy = imbr_reduce; 
 imbr_redcopy = mat2gray(imbr_redcopy);
 lvl = multithresh(imbr_redcopy, 2);
-level = lvl(2); disp(level);
+level = lvl(2);
 binary = im2bw(imbr_redcopy, level); 
 
+%Gather struct data about sections of the image. This info
+%will be used for shape identifcation. 
 cc = bwconncomp(binary);
 stats = regionprops(binary, 'Area', 'Perimeter');
 perim = cat(1,stats.Perimeter);
 area = cat(1,stats.Area);
 
-%circularity testing, closer to circle -> closer to 1 from > 1
+%Test section of image for circularity. CircularityA has a 
+%circularity value that approaches 1 from above as the image
+%becomes more circularity. CircularityB is the inverse. Once we
+%calculate the circualrity, compare and find.
 circularityA = (perim.^2)./(4*pi*area); maxCirc = 1.5;
-%circularity testing, closer to circle -> closer to 1 from < 1
 circularityB = (4*pi*area)./(perim.^2); minCirc = 0.7;
 idx = find(circularityB > minCirc);
 BW2 = ismember(labelmatrix(cc), idx);
 
-%figure, imshow(BW2); %don't include in final
-
-x = bwperim(BW2);
-imagesc(x)
-
+%Filter out small pieces and remove any residual border
 p = 3500;
 bim = bwareaopen(BW2, p);
 brem = imclearborder(bim); 
 
+%Concatenate ("overlay") isolated tumor over the reduced
+%brightness original image.
 figure('Name', 'Final, overlayed')
 final = imbr_reduce;
 final(:,:,1) = double(final(:,:,1)) + (256 * brem);
