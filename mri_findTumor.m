@@ -21,7 +21,7 @@ switch(choice)
     case 4
         im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri4.jpg');
     case 5
-        im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri8.jpg');
+        im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri5.jpg');
     otherwise
         error('Program error, use a number w/in [1, 3]!')
 end
@@ -32,6 +32,10 @@ imsize = size(im); max = 900;
 if (imsize(1) < max)
     im = imresize(im, (max/imsize(1))); 
 end
+
+%Show the original imaeg, we will use this to compare the final to
+figure('Name', 'Original image')
+imshow(im)
 
 %Convert to a grayscale image, and then reduce the brightness. The
 %reduced brightness image will be used in the final product. 
