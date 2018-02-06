@@ -10,7 +10,7 @@ Author/Name: Liam Heisler, ljh78@drexel.edu
 function mri_findTumor() %Do we want user input?
 
 %User choice, which scan do they want to test?
-choice = input('MRI image: '); 
+choice = input('MRI image: '); 1
 switch(choice)
     case 1
         im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri1.jpg');
@@ -21,7 +21,7 @@ switch(choice)
     case 4
         im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri4.jpg');
     case 5
-        im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri5.jpg');
+        im = imread('C:/Users/liamh/OneDrive/Desktop/tumor/mri8.jpg');
     otherwise
         error('Program error, use a number w/in [1, 3]!')
 end
